@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follower Goal Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            margin: 0;
+            overflow: hidden;
+        }
+        .goal-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 10px;
+            position: relative;
+        }
+        .goal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px #fff;
+        }
+        .goal-bar {
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(90deg, #0000ff, #8000ff);
+            border-radius: 10px;
+            box-shadow: 0 0 10px #8000ff;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f, #a0f);
+            box-shadow: 0 0 10px #a0f;
+            transition: width 0.5s ease-in-out;
+        }
+        .goal-text {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        /* Сховане поле для редагування фоловерів */
+        .edit-container {
+            display: none; /* Зробимо його схованим */
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .edit-container input {
+            padding: 5px;
+            width: 80px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .edit-container button {
+            padding: 5px 10px;
+            background-color: #8000ff;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .edit-container button:hover {
+            background-color: #6000cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="goal-container">
+        <div class="goal-title">Ціль: 100 фоловерів до вебкамери</div>
+        <div class="goal-bar">
+            <div class="progress" id="progress"></div>
+            <div class="goal-text" id="goal-text">0 з 100</div>
+        </div>
+    </div>
+
+    <!-- Сховане поле для редагування -->
+    <div class="edit-container" id="edit-container">
+        <input type="number" id="manualFollowers" placeholder="Кількість фоловерів" />
+        <button onclick="setFollowers()">Оновити кількість</button>
+    </div>
+
+    <script>
+        const goalFollowers = 100; // Цільове значення фоловерів
+        let currentFollowers = 16; // Початкове значення фоловерів
+
+        // Функція для оновлення прогресу
+        function updateProgress() {
+            const progressElement = document.getElementById("progress");
+            const textElement = document.getElementById("goal-text");
+            
+            let percentage = (currentFollowers / goalFollowers) * 100;
+            percentage = percentage > 100 ? 100 : percentage;
+            progressElement.style.width = percentage + "%";
+            textElement.innerText = `${currentFollowers} з ${goalFollowers}`;
+        }
+
+        // Функція для ручного введення фоловерів
+        function setFollowers() {
+            const manualFollowers = document.getElementById("manualFollowers").value;
+            if (manualFollowers >= 0 && manualFollowers <= goalFollowers) {
+                currentFollowers = parseInt(manualFollowers);
+                updateProgress();
+            } else {
+                alert("Будь ласка, введіть правильну кількість фоловерів.");
+            }
+        }
+
+        // Функція для показу поля редагування
+        function showEditContainer() {
+            const editContainer = document.getElementById("edit-container");
+            editContainer.style.display = 'block'; // Відкриваємо поле для редагування
+        }
+
+        // Відкриємо поле редагування через 5 секунд (можна змінити на інший тригер)
+        setTimeout(showEditContainer, 5000); // Поле з'явиться через 5 секунд після завантаження сторінки
+
+        // Функція для зміни фоловерів при натисканні клавіш
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "+") {
+                currentFollowers++; // Додаємо 1 фоловера при натисканні клавіші 1
+                updateProgress();
+            }
+            if (event.key === "_") {
+                currentFollowers--; // Віднімаємо 1 фоловера при натисканні клавіші 2
+                if (currentFollowers < 0) currentFollowers = 0; // Перевірка, щоб кількість фоловерів не була менша за 0
+                updateProgress();
+            }
+        });
+
+        updateProgress(); // Початкове оновлення прогресу
+    </script>
+</body>
+</html>
